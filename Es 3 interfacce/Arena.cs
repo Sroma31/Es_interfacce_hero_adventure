@@ -17,7 +17,7 @@ namespace GiocoDiRuolo
         public void Scontro(IPersonaggio eroe, IPersonaggio mostro)
         {
             Console.Clear();
-            Console.WriteLine($"--- SCENARIO: {AmbienteCorrente} ---");
+            Console.WriteLine($"SCENARIO: {AmbienteCorrente} ");
             Console.WriteLine($" INIZIO SCONTRO NELL'ARENA ");
             Console.WriteLine($"{eroe.Nome} (HP:{eroe.Vita} | STR:{eroe.Forza}) VS {mostro.Nome}");
             Console.WriteLine("\n");
@@ -27,7 +27,7 @@ namespace GiocoDiRuolo
                 // CORREZIONE LOOP: Controllo esaurimento forze
                 if (eroe.Forza == 0)
                 {
-                    Console.WriteLine(">>> L'Eroe è esausto (Forza 0) e crolla a terra!");
+                    Console.WriteLine(" L'Eroe è esausto (Forza 0) e crolla a terra!");
                     break; // Interrompe il loop forzatamente
                 }
 
@@ -92,7 +92,7 @@ namespace GiocoDiRuolo
         {
             Array valori = Enum.GetValues(typeof(TipoAmbiente));
             AmbienteCorrente = (TipoAmbiente)valori.GetValue(_rnd.Next(valori.Length));
-            Console.WriteLine($"\n*** L'ambiente cambia! Ora sei in: {AmbienteCorrente} ***\n");
+            Console.WriteLine($"\n L'ambiente cambia! Ora sei in: {AmbienteCorrente} \n");
         }
     }
 }

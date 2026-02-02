@@ -7,7 +7,7 @@ namespace GiocoDiRuolo
         static void Main(string[] args)
         {
             Arena arena = new Arena();
-            Umano eroe = new Umano("Aragorn");
+            Umano eroe = new Umano("Veneti il boss");
 
             Console.Write("C'è la luna piena stasera? (s/n): ");
             string rispostaLuna = Console.ReadLine();

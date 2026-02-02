@@ -2,13 +2,13 @@
 
 namespace GiocoDiRuolo
 {
-    public class Licantropo : Personaggio
+    public class Licantropo : Mostro
     {
         public static bool IsLunaPiena { get; set; } = false;
 
         public Licantropo(string nome) : base(nome, 12, 10) { } // Statistiche ipotizzate
 
-        public override void Attacca(IPersonaggio bersaglio)
+        protected override void EseguiAzzanno(IPersonaggio bersaglio)
         {
             if (!IsVivo) return;
 
