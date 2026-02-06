@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GiocoDiRuolo
+namespace Es_3_interfacce.personaggi.mostri
 {
     // Classe intermedia per raggruppare i mostri che si comportano allo stesso modo
     public abstract class Mostro : Personaggio

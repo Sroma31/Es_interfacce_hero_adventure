@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GiocoDiRuolo
+namespace Es_3_interfacce.personaggi.mostri
 {
     public class Licantropo : Mostro
     {
@@ -16,7 +16,7 @@ namespace GiocoDiRuolo
 
             // Danno ipotetico basato su standard mostro (es. 1d6 danno base)
             int dannoBase = TiraDadi(6);
-            int dannoTotale = dannoBase * (Forza / 2);
+            int dannoTotale = dannoBase * (Forza / 2)+arma.damage;
             bersaglio.SubisciDanno(dannoTotale);
 
             // Gestione Forza FASE 2:

@@ -1,4 +1,4 @@
-﻿namespace GiocoDiRuolo
+﻿namespace Es_3_interfacce.personaggi
 {
     public interface IPersonaggio
     {

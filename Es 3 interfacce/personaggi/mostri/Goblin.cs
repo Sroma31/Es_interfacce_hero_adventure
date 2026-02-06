@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GiocoDiRuolo
+namespace Es_3_interfacce.personaggi.mostri
 {
     public class Goblin : Mostro
     {
@@ -14,7 +14,7 @@ namespace GiocoDiRuolo
             int moltiplicatore = Forza / 2;
             if (moltiplicatore == 0 && Forza > 0) moltiplicatore = 1;
 
-            int dannoTotale = dannoBase * moltiplicatore;
+            int dannoTotale = dannoBase * moltiplicatore + arma.damage;
 
             Console.WriteLine($"{Nome} morde!");
             bersaglio.SubisciDanno(dannoTotale);

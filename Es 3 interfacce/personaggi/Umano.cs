@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace GiocoDiRuolo
+namespace Es_3_interfacce.personaggi
 {
     public class Umano : Personaggio
     {
-        public Umano(string nome) : base(nome, 10, 12) { }
+        public Umano(string nome) : base(nome, 10, 50) { }
 
         public override void Attacca(IPersonaggio bersaglio)
         {
@@ -14,12 +14,12 @@ namespace GiocoDiRuolo
 
             int dannoBase = TiraDadi(4);
 
-            // CORREZIONE: Se Forza è 1, 1/2 farebbe 0. 
+            
             // Forziamo il moltiplicatore a 1 se c'è ancora un minimo di forza.
             int moltiplicatore = Forza / 2;
             if (moltiplicatore == 0 && Forza > 0) moltiplicatore = 1;
 
-            int dannoTotale = dannoBase * moltiplicatore;
+            int dannoTotale = dannoBase * moltiplicatore+ base.arma.damage;
 
             bersaglio.SubisciDanno(dannoTotale);
 

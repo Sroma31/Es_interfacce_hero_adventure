@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Es_3_interfacce.personaggi;
+using Es_3_interfacce.personaggi.mostri;
+using System;
 
 namespace GiocoDiRuolo
 {
@@ -15,14 +17,14 @@ namespace GiocoDiRuolo
 
             Console.WriteLine($"\nL'avventura inizia nello scenario: {arena.AmbienteCorrente}");
             Console.WriteLine("Preparati a combattere...");
-            System.Threading.Thread.Sleep(1500);
+            System.Threading.Thread.Sleep(1500);// Pausa di 1.5 secondi
 
             int mostriSconfitti = 0;
             bool continuaACombattere = true;
 
             while (eroe.IsVivo && continuaACombattere)
             {
-                IPersonaggio nemico = arena.GeneraMostroCasuale();
+                Personaggio nemico = arena.GeneraMostroCasuale();
                 arena.Scontro(eroe, nemico);
 
                 if (eroe.IsVivo && eroe.Forza > 0) // Aggiunto check forza

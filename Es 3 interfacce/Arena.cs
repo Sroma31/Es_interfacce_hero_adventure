@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Es_3_interfacce.personaggi;
+using Es_3_interfacce.personaggi.mostri;
+using System;
 
 namespace GiocoDiRuolo
 {
@@ -14,13 +16,18 @@ namespace GiocoDiRuolo
             AmbienteCorrente = (TipoAmbiente)valori.GetValue(_rnd.Next(valori.Length));
         }
 
-        public void Scontro(IPersonaggio eroe, IPersonaggio mostro)
+        public void Scontro(Umano eroe, Personaggio mostro)
         {
+            
             Console.Clear();
             Console.WriteLine($"SCENARIO: {AmbienteCorrente} ");
             Console.WriteLine($" INIZIO SCONTRO NELL'ARENA ");
             Console.WriteLine($"{eroe.Nome} (HP:{eroe.Vita} | STR:{eroe.Forza}) VS {mostro.Nome}");
             Console.WriteLine("\n");
+
+           eroe.EquipaggiaArma();
+           mostro.EquipaggiaArma();
+
 
             while (eroe.IsVivo && mostro.IsVivo)
             {
@@ -51,7 +58,7 @@ namespace GiocoDiRuolo
             DecretaVincitore(eroe, mostro);
         }
 
-        public IPersonaggio GeneraMostroCasuale()
+        public Personaggio GeneraMostroCasuale()
         {
             int roll = _rnd.Next(1, 101);
 

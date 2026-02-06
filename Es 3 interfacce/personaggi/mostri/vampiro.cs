@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GiocoDiRuolo
+namespace Es_3_interfacce.personaggi.mostri
 {
     public class Vampiro : Mostro
     {
@@ -10,7 +10,7 @@ namespace GiocoDiRuolo
         {
             // Attacco 1d20, Danno 1d10 * forza/2
             int dannoBase = TiraDadi(10);
-            int dannoTotale = dannoBase * (Forza / 2);
+            int dannoTotale = dannoBase * (Forza / 2) + arma.damage;
 
             Console.WriteLine($"{Nome} azzanna!");
             bersaglio.SubisciDanno(dannoTotale);
