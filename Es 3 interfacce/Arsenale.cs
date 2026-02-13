@@ -1,37 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RpgGame.Items;
 
-namespace Es_3_interfacce.personaggi
+namespace RpgGame.Systems
 {
-    public class Arsenale
+    public static class Arsenal
     {
-        List<Arma> armi = new List<Arma>();
-
-        public Arsenale()
+        // Private list of weapon templates
+        private static List<Weapon> _weaponTemplates = new List<Weapon>()
         {
-            armi.Add(new Arma("Pistola", 10, 100));
-            armi.Add(new Arma("Fucile", 15, 120));
-            armi.Add(new Arma("Coltello", 5, 80));    
-            armi.Add(new Arma("Balestra", 12, 90));
-            armi.Add(new Arma("Ascia", 8, 110));
-        }
+            new Weapon("Pistol", 10, 100),
+            new Weapon("Shotgun", 15, 120),
+            new Weapon("Knife", 5, 80),
+            new Weapon("Crossbow", 12, 90),
+            new Weapon("Battle Axe", 8, 110),
+            new Weapon("Wooden Stake", 5, 20) // Special weapon for Vampires
+        };
 
-        public void AggiungiArma(Arma arma)
-        {
-            armi.Add(arma);
-        }
+        private static Random _rnd = new Random();
 
-        public Arma GetArma(int pos)
+        public static Weapon GetRandomWeapon()
         {
-            return armi[pos];
-        }
+            int index = _rnd.Next(_weaponTemplates.Count);
+            Weapon template = _weaponTemplates[index];
 
-        public int GetArmaCount()
-        {
-            return armi.Count;
+            // Return a NEW instance to ensure unique durability per character
+            return new Weapon(template.Name, template.Damage, template.Durability);
         }
     }
 }

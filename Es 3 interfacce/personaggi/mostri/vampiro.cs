@@ -1,46 +1,68 @@
 ﻿using System;
 
-namespace Es_3_interfacce.personaggi.mostri
+namespace RpgGame.Characters.Monsters
 {
-    public class Vampiro : Mostro
+    public class Vampire : Monster
     {
-        public Vampiro(string nome) : base(nome, 15, 6) { } // Forza 15, Vita 1d6
+        public Vampire(string name) : base(name, 15, 20) { }
 
-        protected override void EseguiAzzanno(IPersonaggio bersaglio)
+        protected override void PerformSpecialAttack(ICharacter target)
         {
-            // Attacco 1d20, Danno 1d10 * forza/2
-            int dannoBase = TiraDadi(10);
-            int dannoTotale = dannoBase * (Forza / 2) + arma.damage;
+            int totalDamage = CalculatePhysicalDamage(10);
+            Console.WriteLine($"{Name} drains blood!");
+            target.TakeDamage(totalDamage, this);
 
-            Console.WriteLine($"{Nome} azzanna!");
-            bersaglio.SubisciDanno(dannoTotale);
+            
+            int healAttempt = 5;
+
+            // Protezione contro valori anomali di MaxHealth
+            int effectiveMax = Math.Max(0, MaxHealth);//math.max per evitare valori negativi di MaxHealth
+
+            int previousHealth = Health;
+            int newHealth = Math.Min(previousHealth + healAttempt, effectiveMax);// Calcolo reale della cura effettiva
+            // math.min per evitare di superare MaxHealth
+
+            int actualHealed = newHealth - previousHealth;
+
+            Health = newHealth;
+
+            if (actualHealed > 0)
+            {
+                Console.WriteLine($"{Name} heals {actualHealed} HP.");
+            }
+            else
+            {
+                Console.WriteLine($"{Name} is already at full health.");
+            }
         }
 
-        // Logica speciale di morte
-        public override void SubisciDanno(int danno)
+        public override void TakeDamage(int amount, ICharacter attacker)
         {
-            base.SubisciDanno(danno);
+            base.TakeDamage(amount, attacker);
 
-            if (Vita <= 0)
+            if (Health <= 0)
             {
-                Console.WriteLine($"{Nome} è a terra");
+                Console.WriteLine($"{Name} falls to the ground...");
 
-                // 20% probabilità palo, 40% accendino
-                bool haPalo = dadi.NextDouble() < 0.20;
-                bool haAccendino = dadi.NextDouble() < 0.40;
+                bool isLethalWeapon = false;
 
-                if (haPalo)
+                // Check if attacker has the specific weapon
+                if (attacker != null && attacker.EquippedWeapon != null)
                 {
-                    Console.WriteLine("Trovato palo di frassino! Il Vampiro è distrutto.");
+                    if (attacker.EquippedWeapon.Name.ToLower().Contains("stake"))
+                    {
+                        isLethalWeapon = true;
+                    }
                 }
-                else if (haAccendino)
+
+                if (isLethalWeapon)
                 {
-                    Console.WriteLine("Accendino funzionante! Il Vampiro è bruciato.");
+                    Console.WriteLine(" THE VAMPIRE TURNS TO DUST (Staked) ");
                 }
                 else
                 {
-                    Console.WriteLine("Nessun oggetto sacro trovato... VAMPIRO SI RIGENERA!");
-                    Vita = VitaMax; // Torna in vita
+                    Console.WriteLine("The weapon was not holy... THE VAMPIRE RESURRECTS");
+                    Health = MaxHealth;
                 }
             }
         }

@@ -1,15 +1,18 @@
 ﻿using System;
 
-public class Arma
+namespace RpgGame.Items
 {
-	public string Name { get; set; }
-	public int damage { get; set; }
-	public int durability { get; set; }
+    public class Weapon
+    {
+        public string Name { get; set; }
+        public int Damage { get; set; }
+        public int Durability { get; set; }
 
-    public Arma(string nm, int dmg, int drblty)
-	{
-		Name = nm;
-		damage = dmg;
-		durability = drblty;
+        public Weapon(string name, int damage, int durability)
+        {
+            Name = name;
+            Damage = damage;
+            Durability = durability;
+        }
     }
 }

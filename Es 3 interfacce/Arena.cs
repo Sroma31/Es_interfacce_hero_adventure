@@ -1,105 +1,132 @@
-﻿using Es_3_interfacce.personaggi;
-using Es_3_interfacce.personaggi.mostri;
-using System;
+﻿using System;
+using System.Threading;
+using System.Collections.Generic;
+using RpgGame.Characters;
+using RpgGame.Characters.Monsters;
+using RpgGame.Environments;
+using RpgGame.Systems;
 
-namespace GiocoDiRuolo
-{
+namespace RpgGame
+{   
+
     public class Arena
     {
         private Random _rnd = new Random();
-
-        public TipoAmbiente AmbienteCorrente { get; private set; }
+        public EnvironmentType CurrentEnvironment { get; private set; }
 
         public Arena()
         {
-            Array valori = Enum.GetValues(typeof(TipoAmbiente));
-            AmbienteCorrente = (TipoAmbiente)valori.GetValue(_rnd.Next(valori.Length));
+            ChangeEnvironment();
         }
 
-        public void Scontro(Umano eroe, Personaggio mostro)
+        //  SINGLE FIGHT MODE 
+        public void StartDuel(Human hero, Character monster)
         {
-            
             Console.Clear();
-            Console.WriteLine($"SCENARIO: {AmbienteCorrente} ");
-            Console.WriteLine($" INIZIO SCONTRO NELL'ARENA ");
-            Console.WriteLine($"{eroe.Nome} (HP:{eroe.Vita} | STR:{eroe.Forza}) VS {mostro.Nome}");
-            Console.WriteLine("\n");
+            Console.WriteLine($" DUEL IN: {CurrentEnvironment} ");
+            Console.WriteLine($"{hero.Name} VS {monster.Name}");
 
-           eroe.EquipaggiaArma();
-           mostro.EquipaggiaArma();
+            if (hero.EquippedWeapon == null) hero.EquipRandomWeapon();
+            monster.EquipRandomWeapon();
 
+            BattleLoop(hero, monster);
+        }
 
-            while (eroe.IsVivo && mostro.IsVivo)
+        //  HORDE MODE 
+        public void StartHordeMode(Human hero, int numberOfMonsters)
+        {
+            Console.Clear();
+            Console.WriteLine($" HORDE MODE ACTIVATED");
+            Console.WriteLine($"Hero: {hero.Name}");
+            Console.WriteLine($"Objective: Survive {numberOfMonsters} monsters.");
+            Console.WriteLine("");
+            Thread.Sleep(2000);
+
+            if (hero.EquippedWeapon == null) hero.EquipRandomWeapon();
+
+            int defeatedCount = 0;
+
+            for (int i = 1; i <= numberOfMonsters; i++)
             {
-                // CORREZIONE LOOP: Controllo esaurimento forze
-                if (eroe.Forza == 0)
+                if (!hero.IsAlive) break;
+
+                Console.WriteLine($"\n WAVE {i}/{numberOfMonsters} ");
+                Character monster = GenerateRandomMonster();
+                monster.EquipRandomWeapon();
+
+                Console.WriteLine($" {monster.Name} appears");
+
+                // Start fight
+                BattleLoop(hero, monster);
+
+                if (hero.IsAlive && hero.Strength > 0)
                 {
-                    Console.WriteLine(" L'Eroe è esausto (Forza 0) e crolla a terra!");
-                    break; // Interrompe il loop forzatamente
+                    defeatedCount++;
+                    Console.WriteLine($"Wave {i} cleared");
+                    // Little reward for surviving a wave
+                    hero.EquipRandomWeapon(); // Get a fresh weapon
+                }
+            }
+
+            Console.WriteLine("\n HORDE MODE RESULTS ");
+            if (hero.IsAlive)
+                Console.WriteLine("VICTORY. The hero survived the horde.");
+            else
+                Console.WriteLine($"DEFEAT... The hero fell after defeating {defeatedCount} monsters.");
+        }
+
+        // Shared Logic for fighting
+        private void BattleLoop(Human hero, Character monster)
+        {
+            while (hero.IsAlive && monster.IsAlive)
+            {
+                if (hero.Strength <= 0)
+                {
+                    Console.WriteLine("Hero is exhausted (0 Strength)!");
+                    break;
                 }
 
-                // Turno Eroe
-                eroe.Attacca(mostro);
-                if (!mostro.IsVivo) break;
+                // Hero Turn
+                hero.Attack(monster);
+                if (!monster.IsAlive) break;
 
                 Console.WriteLine();
 
-                // Turno Mostro
-                mostro.Attacca(eroe);
+                // Monster Turn
+                monster.Attack(hero);
 
-                Console.WriteLine("\n Fine Round ");
-                eroe.StampaStato();
-                mostro.StampaStato();
-                Console.WriteLine("\n");
-
-                System.Threading.Thread.Sleep(800);
+                // Small delay for readability
+                Thread.Sleep(500);
             }
-
-            DecretaVincitore(eroe, mostro);
         }
 
-        public Personaggio GeneraMostroCasuale()
+        public Character GenerateRandomMonster()
         {
             int roll = _rnd.Next(1, 101);
 
-            switch (AmbienteCorrente)
+            switch (CurrentEnvironment)
             {
-                case TipoAmbiente.CastelloOscuro:
-                    if (roll <= 50) return new Vampiro("Conte del Castello");
-                    if (roll <= 70) return new Licantropo("Guardia Mannara");
-                    return new Goblin("Servo Goblin");
+                case EnvironmentType.DarkCastle:
+                    if (roll <= 40) return new Vampire("Count Dracula");
+                    if (roll <= 70) return new Werewolf("Royal Werewolf");
+                    return new Goblin("Butler Goblin");
 
-                case TipoAmbiente.ForestaMaledetta:
-                    if (roll <= 10) return new Vampiro("Vampiro Errante");
-                    if (roll <= 50) return new Licantropo("Lupo della Foresta");
-                    return new Goblin("Goblin dei Boschi");
+                case EnvironmentType.CursedForest:
+                    if (roll <= 20) return new Vampire("Wandering Vampire");
+                    if (roll <= 60) return new Werewolf("Alpha Wolf");
+                    return new Goblin("Forest Goblin");
 
-                case TipoAmbiente.CavernaGoblin:
-                default:
-                    if (roll <= 5) return new Vampiro("Vampiro Perduto");
-                    if (roll <= 20) return new Licantropo("Licantropo di Caverna");
-                    return new Goblin("Goblin Minatore");
+                default: // GoblinCave
+                    if (roll <= 5) return new Vampire("Lost Vampire");
+                    if (roll <= 20) return new Werewolf("Cave Werewolf");
+                    return new Goblin("Goblin King");
             }
         }
 
-        private void DecretaVincitore(IPersonaggio p1, IPersonaggio p2)
+        public void ChangeEnvironment()
         {
-            Console.WriteLine("\n");
-            // Se l'eroe è vivo ma ha forza 0, tecnicamente ha perso per ritiro/svenimento
-            if (p1.IsVivo && p1.Forza > 0)
-                Console.WriteLine($"VITTORIA! {p1.Nome} ha vinto.");
-            else if (p1.Forza == 0)
-                Console.WriteLine($"SCONFITTA TECNICA... {p1.Nome} è svenuto per la fatica.");
-            else
-                Console.WriteLine($"SCONFITTA... {p2.Nome} ha vinto.");
-            Console.WriteLine("");
-        }
-
-        public void CambiaAmbienteCasuale()
-        {
-            Array valori = Enum.GetValues(typeof(TipoAmbiente));
-            AmbienteCorrente = (TipoAmbiente)valori.GetValue(_rnd.Next(valori.Length));
-            Console.WriteLine($"\n L'ambiente cambia! Ora sei in: {AmbienteCorrente} \n");
+            List<EnvironmentType> values = new List<EnvironmentType>(Enum.GetValues<EnvironmentType>()); // Get all possible environment types
+            CurrentEnvironment = values[_rnd.Next(values.Count)]; // Randomly select one
         }
     }
 }

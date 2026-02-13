@@ -1,9 +1,9 @@
-﻿namespace GiocoDiRuolo
+﻿namespace RpgGame.Environments
 {
-    public enum TipoAmbiente
+    public enum EnvironmentType
     {
-        ForestaMaledetta, // Molti Lupi/Goblin, pochi Vampiri
-        CastelloOscuro,   // Molti Vampiri
-        CavernaGoblin     // Quasi solo Goblin
+        CursedForest,
+        DarkCastle,
+        GoblinCave
     }
 }

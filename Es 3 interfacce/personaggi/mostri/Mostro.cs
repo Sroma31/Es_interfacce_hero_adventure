@@ -1,29 +1,23 @@
 ﻿using System;
 
-namespace Es_3_interfacce.personaggi.mostri
+namespace RpgGame.Characters.Monsters
 {
-    // Classe intermedia per raggruppare i mostri che si comportano allo stesso modo
-    public abstract class Mostro : Personaggio
+    public abstract class Monster : Character
     {
-        public Mostro(string nome, int forzaIniziale, int dadiVita)
-            : base(nome, forzaIniziale, dadiVita) { }
+        public Monster(string name, int strength, int healthDice)
+            : base(name, strength, healthDice) { }
 
-        // Override sigillato nella logica di consumo, ma aperto nel calcolo danno
-        public override void Attacca(IPersonaggio bersaglio)
+        public override void Attack(ICharacter target)
         {
-            if (!IsVivo) return;
+            if (!IsAlive) return;
 
-            Console.WriteLine($"{Nome}  prepara l'attacco");
+            PerformSpecialAttack(target);
 
-            // Chiama il metodo specifico del mostro concreto
-            EseguiAzzanno(bersaglio);
-
-            // Regola della dispensa: il mostro perde 2 di forza ad ogni azzanno
-            Forza -= 2;
-            if (Forza < 0) Forza = 0;
+            // Monsters lose energy/strength after attacking
+            if (Strength > 0) Strength -= 2;
+            if (Strength < 0) Strength = 0;
         }
 
-        // Ogni mostro specifico (Goblin, Vampiro) deve definire come calcola i danni
-        protected abstract void EseguiAzzanno(IPersonaggio bersaglio);
+        protected abstract void PerformSpecialAttack(ICharacter target);
     }
 }

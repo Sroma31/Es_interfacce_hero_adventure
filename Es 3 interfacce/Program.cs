@@ -1,59 +1,67 @@
-﻿using Es_3_interfacce.personaggi;
-using Es_3_interfacce.personaggi.mostri;
-using System;
+﻿using System;
+using RpgGame.Characters;
+using RpgGame.Characters.Monsters;
+using RpgGame.Environments;
 
-namespace GiocoDiRuolo
+namespace RpgGame
 {
     class Program
     {
         static void Main(string[] args)
         {
             Arena arena = new Arena();
-            Umano eroe = new Umano("Veneti il boss");
+            Console.Write("Enter Hero Name: ");
+            string heroName = Console.ReadLine();
+            Human hero = new Human(heroName);
 
-            Console.Write("C'è la luna piena stasera? (s/n): ");
-            string rispostaLuna = Console.ReadLine();
-            Licantropo.IsLunaPiena = (rispostaLuna.ToLower() == "s");
+            Console.Write("Is it full moon tonight? (s/n): ");
+            string moonInput = Console.ReadLine();
+            Werewolf.IsFullMoon = (moonInput.ToLower() == "s");
 
-            Console.WriteLine($"\nL'avventura inizia nello scenario: {arena.AmbienteCorrente}");
-            Console.WriteLine("Preparati a combattere...");
-            System.Threading.Thread.Sleep(1500);// Pausa di 1.5 secondi
+            Console.WriteLine("\nChoose Mode:");
+            Console.WriteLine("1. Classic Adventure (Travel and fight 1 by 1)");
+            Console.WriteLine("2. Horde Mode (Survival Arena)");
+            string mode = Console.ReadLine();
 
-            int mostriSconfitti = 0;
-            bool continuaACombattere = true;
-
-            while (eroe.IsVivo && continuaACombattere)
+            if (mode == "2")
             {
-                Personaggio nemico = arena.GeneraMostroCasuale();
-                arena.Scontro(eroe, nemico);
-
-                if (eroe.IsVivo && eroe.Forza > 0) // Aggiunto check forza
+                Console.Write("How many monsters do you want to fight?: ");
+                //TryParse is used to safely convert the input to an integer. If the conversion fails ( user enters non-numeric), it will return false.
+                //out is used to declare the variable 'count' that will hold the parsed integer value if the conversion is successful.
+                if (int.TryParse(Console.ReadLine(), out int count))//
                 {
-                    mostriSconfitti++;
-                    Console.WriteLine($" Hai sconfitto {mostriSconfitti} mostri consecutivi! ");
-
-                    Console.Write("Vuoi affrontare il prossimo mostro? (s/n): ");
-                    string scelta = Console.ReadLine();
-                    if (scelta.ToLower() != "s")
-                    {
-                        continuaACombattere = false;
-                    }
-                    else
-                    {
-                        arena.CambiaAmbienteCasuale();
-                    }
+                    arena.StartHordeMode(hero, count);
                 }
                 else
                 {
-                    // Se esce dal loop perché morto o forza 0
-                    continuaACombattere = false;
+                    Console.WriteLine("Invalid number.");
+                }
+            }
+            else
+            {
+                // Classic Logic
+                bool keepFighting = true;
+                while (hero.IsAlive && keepFighting)
+                {
+                    Character monster = arena.GenerateRandomMonster();
+                    arena.StartDuel(hero, monster);
+
+                    if (hero.IsAlive && hero.Strength > 0)
+                    {
+                        Console.Write("Continue to next location? (s/n): ");
+                        if (Console.ReadLine().ToLower() != "s")// If user doesn't want to continue, exit the loop. ToLower() is used to make it case-insensitive, so both 's' and 'S' will work.
+                            keepFighting = false;
+                        else
+                            arena.ChangeEnvironment();
+                    }
+                    else
+                    {
+                        keepFighting = false;
+                    }
                 }
             }
 
-            Console.WriteLine("\n GAME OVER ");
-            Console.WriteLine($"Eroe: {eroe.Nome}");
-            Console.WriteLine($"Mostri Sconfitti: {mostriSconfitti}");
-            Console.WriteLine("Premi invio per chiudere.");
+            Console.WriteLine("\nPress Enter to exit.");
             Console.ReadLine();
         }
     }

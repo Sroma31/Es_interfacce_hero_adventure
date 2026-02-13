@@ -1,23 +1,16 @@
 ﻿using System;
 
-namespace Es_3_interfacce.personaggi.mostri
+namespace RpgGame.Characters.Monsters
 {
-    public class Goblin : Mostro
+    public class Goblin : Monster
     {
-        public Goblin(string nome) : base(nome, 4, 6) { }
+        public Goblin(string name) : base(name, 6, 15) { }
 
-        protected override void EseguiAzzanno(IPersonaggio bersaglio)
+        protected override void PerformSpecialAttack(ICharacter target)
         {
-            int dannoBase = TiraDadi(3);
-
-            // CORREZIONE MATEMATICA
-            int moltiplicatore = Forza / 2;
-            if (moltiplicatore == 0 && Forza > 0) moltiplicatore = 1;
-
-            int dannoTotale = dannoBase * moltiplicatore + arma.damage;
-
-            Console.WriteLine($"{Nome} morde!");
-            bersaglio.SubisciDanno(dannoTotale);
+            int totalDamage = CalculatePhysicalDamage(4); // Weak attack
+            Console.WriteLine($"{Name} strikes sneakily!");
+            target.TakeDamage(totalDamage, this);
         }
     }
 }

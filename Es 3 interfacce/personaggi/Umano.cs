@@ -1,31 +1,27 @@
 ﻿using System;
 
-namespace Es_3_interfacce.personaggi
+namespace RpgGame.Characters
 {
-    public class Umano : Personaggio
+    public class Human : Character
     {
-        public Umano(string nome) : base(nome, 10, 50) { }
+        public Human(string name) 
+            : base(name, 10, 50)
+        { 
+        
+        }
 
-        public override void Attacca(IPersonaggio bersaglio)
+        public override void Attack(ICharacter target)
         {
-            if (!IsVivo) return;
+            if (!IsAlive) return;
 
-            Console.WriteLine($"{Nome} attacca!");
+            Console.WriteLine($"{Name} attacks");
 
-            int dannoBase = TiraDadi(4);
+            int totalDamage = CalculatePhysicalDamage(6); // 1d6 Base
+            target.TakeDamage(totalDamage, this);
 
-            
-            // Forziamo il moltiplicatore a 1 se c'è ancora un minimo di forza.
-            int moltiplicatore = Forza / 2;
-            if (moltiplicatore == 0 && Forza > 0) moltiplicatore = 1;
-
-            int dannoTotale = dannoBase * moltiplicatore+ base.arma.damage;
-
-            bersaglio.SubisciDanno(dannoTotale);
-
-            // Consumo forza
-            Forza -= 3;
-            if (Forza < 0) Forza = 0;
+            // Humans get tired
+            Strength -= 1;
+            if (Strength < 0) Strength = 0;
         }
     }
 }

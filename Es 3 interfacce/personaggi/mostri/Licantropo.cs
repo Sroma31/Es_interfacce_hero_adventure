@@ -1,31 +1,47 @@
 ﻿using System;
 
-namespace Es_3_interfacce.personaggi.mostri
+namespace RpgGame.Characters.Monsters
 {
-    public class Licantropo : Mostro
+    public class Werewolf : Monster
     {
-        public static bool IsLunaPiena { get; set; } = false;
 
-        public Licantropo(string nome) : base(nome, 12, 10) { } // Statistiche ipotizzate
+        public static bool IsFullMoon { get; set; } = false;
 
-        protected override void EseguiAzzanno(IPersonaggio bersaglio)
+
+        public Werewolf(string name) : base(name, 12, 30)
         {
-            if (!IsVivo) return;
 
-            Console.WriteLine($"{Nome}  attacca!");
+        }
 
-            // Danno ipotetico basato su standard mostro (es. 1d6 danno base)
-            int dannoBase = TiraDadi(6);
-            int dannoTotale = dannoBase * (Forza / 2)+arma.damage;
-            bersaglio.SubisciDanno(dannoTotale);
 
-            // Gestione Forza FASE 2:
-            // 2 se luna piena, 3 nelle altre
-            int malusForza = IsLunaPiena ? 2 : 3;
-            Forza -= malusForza;
-            if (Forza < 0) Forza = 0;
+        protected override void PerformSpecialAttack(ICharacter target)
+        {
 
-            Console.WriteLine($"(Luna Piena: {IsLunaPiena}  Perdita Forza: {malusForza})");
+            int diceFaces;
+            if (IsFullMoon == true)
+            {
+                diceFaces = 12;
+            }
+            else
+            {
+                diceFaces = 6;
+            }
+
+
+            int totalDamage = CalculatePhysicalDamage(diceFaces);
+
+          
+            Console.WriteLine($"{this.Name} si scaglia contro il bersaglio! (Luna piena: {(IsFullMoon ? "Sì" : "No")})");
+
+            // Applica il danno al bersaglio; passa 'this' come attaccante per eventuali check
+            target.TakeDamage(totalDamage, this);
+
+            // Durante la luna piena i lupi mannari rigenerano forza: incrementiamo Strength di 1
+            if (IsFullMoon == true)
+            {
+                int nuovaForza = this.Strength + 1;
+                this.Strength = nuovaForza;
+            }
         }
     }
 }

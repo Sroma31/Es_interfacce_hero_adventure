@@ -1,76 +1,82 @@
 ﻿using System;
-using System.Collections.Generic;
+using RpgGame.Items;
+using RpgGame.Systems;
 
-namespace Es_3_interfacce.personaggi
+namespace RpgGame.Characters
 {
-    public abstract class Personaggio : IPersonaggio
+    public abstract class Character : ICharacter
     {
-        protected static Random dadi = new Random();
+        protected static Random Dice = new Random();
 
-        public Arsenale abcv = new Arsenale();
-        protected Arma arma;
+        public Weapon EquippedWeapon { get; protected set; }
+        public string Name { get; protected set; }
+        public int Strength { get; protected set; }
+        public int Health { get; protected set; }
+        public int MaxHealth { get; protected set; }
 
-        public string Nome { get; protected set; }
-        public int Forza { get; protected set; }
-        public int Vita { get; protected set; }
-        public int VitaMax { get; protected set; }
+        public bool IsAlive => Health > 0;
 
-        public bool IsVivo => Vita > 0;
-
-        public Personaggio(string nome, int forzaIniziale, int dadiVita)
+        public Character(string name, int initialStrength, int healthDice)
         {
-            Nome = nome;
-            Forza = forzaIniziale;
-            // 1dX significa un numero tra 1 e X
-            VitaMax = dadi.Next(1, dadiVita + 1);
-            Vita = VitaMax;
+            Name = name;
+            Strength = initialStrength;
+            // Roll HP based on the provided dice type (e.g., 50 for Humans)
+            MaxHealth = Dice.Next(1, healthDice + 1) + 20; // Added base 20 HP so they don't start with 1
+            Health = MaxHealth;
         }
 
-        public abstract void Attacca(IPersonaggio bersaglio);
+        public abstract void Attack(ICharacter target);
 
-        public virtual void SubisciDanno(int danno)
+        // Centralized damage calculation
+        protected int CalculatePhysicalDamage(int baseDiceFaces)
         {
-            Vita -= danno;
-            if (Vita < 0) Vita = 0;
-            if (arma.durability <= 0)
+            int baseRoll = RollDice(baseDiceFaces);
+
+            // Strength multiplier (min 1 if strength > 0)
+            int multiplier = (Strength > 0) ? Math.Max(1, Strength / 2) : 0;
+
+            int weaponDamage = (EquippedWeapon != null) ? EquippedWeapon.Damage : 0;
+
+            return (baseRoll * multiplier) + weaponDamage;
+        }
+
+        public virtual void TakeDamage(int amount, ICharacter attacker)
+        {
+            Health -= amount;
+            if (Health < 0)
             {
-                Console.WriteLine($"{Nome} ha distrutto {arma.Name}!");
-                arma = null; // L'arma è distrutta
+                Health = 0;
             }
-            else
+            Console.WriteLine($"{Name} takes {amount} damage (HP: {Health}/{MaxHealth})");
+
+            // Handle Weapon Durability degradation
+            if (EquippedWeapon != null)
             {
-                arma.durability -= 1; // Ogni attacco riduce la durabilità dell'arma
-
+                EquippedWeapon.Durability -= 1;
+                if (EquippedWeapon.Durability <= 0)
+                {
+                    Console.WriteLine($"CRACK! {Name}'s {EquippedWeapon.Name} broke!");
+                    EquippedWeapon = null;
+                }
             }
-            Console.WriteLine($"{Nome} subisce {danno} danni (Vita: {Vita}/{VitaMax})");
         }
 
-        public void StampaStato()
+        public void EquipRandomWeapon()
         {
-            Console.WriteLine($"[{Nome}] HP: {Vita}/{VitaMax} | STR: {Forza}");
+            EquippedWeapon = Arsenal.GetRandomWeapon();
+            Console.WriteLine($"{Name} equipped {EquippedWeapon.Name} (Dmg: {EquippedWeapon.Damage})");
         }
 
-
-
-        protected int TiraDadi(int facce)
+        public void PrintStatus()
         {
-            if (facce <= 0)// Controllo per evitare valori non validi
-            {
-                throw new ArgumentOutOfRangeException(nameof(facce), facce, "Il numero di facce deve essere maggiore di zero.");
-            }
-
-            // Genera un valore casuale tra 1 e 'facce' inclusi
-            int risultato = dadi.Next(1, facce + 1);
-            return risultato;
+            string weaponName = (EquippedWeapon != null) ? EquippedWeapon.Name : "Fists";
+            Console.WriteLine($"[{Name}] HP: {Health}/{MaxHealth} | STR: {Strength} | WPN: {weaponName}");
         }
 
-
-        public void EquipaggiaArma()
+        protected int RollDice(int faces)
         {
-            Random rnd = new Random();
-            arma = abcv.GetArma(rnd.Next(0, abcv.GetArmaCount()));
-            Console.WriteLine($"{Nome} ha equipaggiato {arma.Name} (Danno: {arma.damage})");
-
+            if (faces <= 0) return 0;
+            return Dice.Next(1, faces + 1);
         }
     }
 }
