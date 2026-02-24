@@ -1,0 +1,19 @@
+Hero Adventure - D&D Improvement Ideas
+
+Gameplay Improvements:
+1. Hero Health Regeneration: +5 HP after each victory to improve survivability.
+2. Functional Loot: Denaro buys potions, Smeraldo boosts strength, Totem gives damage reduction.
+3. Monster Scaling: Increase monster strength/health as Horde Mode waves progress.
+4. Flee Option: Allow the hero to escape battles at a cost.
+
+Code Design Improvements:
+5. Strength Guard: Centralize strength reduction behind a protected method.
+6. Record Types: Convert Weapon class to a C# record for cleaner data handling.
+7. Durability Logic Cleanup: Remove leftover comments in Personaggio.cs regarding old durability logic.
+8. Interface Parity: Add StealLoot, EraseLoot, and PrintFullLoot to ICharacter.
+9. Using Directives Cleanup: Remove unused namespaces in LootItem.cs and others.
+
+Polish:
+10. File Organization: Move Arena.cs and TipoAmbiente.cs into a dedicated Logic folder.
+11. Random Names: Add a pool of names for monsters to avoid repetition.
+12. Vampire Balance: Add a limit to Vampire resurrections.

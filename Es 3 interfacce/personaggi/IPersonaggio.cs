@@ -9,7 +9,7 @@ namespace RpgGame.Characters
         int Health { get; }
         int MaxHealth { get; }
         bool IsAlive { get; }
-        Weapon EquippedWeapon { get; }
+        Weapon? EquippedWeapon { get; }
 
 
 

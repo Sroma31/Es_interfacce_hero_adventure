@@ -1,4 +1,4 @@
-﻿namespace Es_3_interfacce.Ambient
+﻿namespace RpgGame.Logic
 {
     public enum EnvironmentType
     {

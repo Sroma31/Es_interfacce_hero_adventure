@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Es_3_interfacce.Fight_logic
+namespace RpgGame.Items
 {
     public enum LootNames
     {

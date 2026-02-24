@@ -12,6 +12,7 @@ namespace RpgGame.Characters.Monsters
             if (!IsAlive) return;
 
             PerformSpecialAttack(target);
+            ReduceWeaponDurability();
 
             // Monsters lose energy/strength after attacking
             if (Strength > 0) Strength -= 2;

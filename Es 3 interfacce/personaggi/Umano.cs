@@ -19,6 +19,8 @@ namespace RpgGame.Characters
             int totalDamage = CalculatePhysicalDamage(6); // 1d6 Base
             target.TakeDamage(totalDamage, this);
 
+            ReduceWeaponDurability();
+
             // Humans get tired
             Strength -= 1;
             if (Strength < 0) Strength = 0;

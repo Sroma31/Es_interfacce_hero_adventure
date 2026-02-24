@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using RpgGame.Characters;
 using RpgGame.Characters.Monsters;
 using RpgGame.Systems;
+using RpgGame.Items;
 
-namespace Es_3_interfacce.Ambient
+namespace RpgGame.Logic
 {   
-
     public class Arena
     {
         private Random _rnd = new Random();
@@ -18,7 +18,6 @@ namespace Es_3_interfacce.Ambient
             ChangeEnvironment();
         }
 
-        //  SINGLE FIGHT MODE 
         public void StartDuel(Human hero, Character monster)
         {
             Console.Clear();
@@ -33,7 +32,6 @@ namespace Es_3_interfacce.Ambient
             BattleLoop(hero, monster);
         }
 
-        //  HORDE MODE 
         public void StartHordeMode(Human hero, int numberOfMonsters)
         {
             Console.Clear();
@@ -57,15 +55,13 @@ namespace Es_3_interfacce.Ambient
 
                 Console.WriteLine($" {monster.Name} appears");
 
-                // Start fight
                 BattleLoop(hero, monster);
 
                 if (hero.IsAlive && hero.Strength > 0)
                 {
                     defeatedCount++;
                     Console.WriteLine($"Wave {i} cleared");
-                    // Little reward for surviving a wave
-                    hero.EquipRandomWeapon(); // Get a fresh weapon
+                    hero.EquipRandomWeapon();
                 }
             }
 
@@ -76,14 +72,13 @@ namespace Es_3_interfacce.Ambient
                 Console.WriteLine($"DEFEAT... The hero fell after defeating {defeatedCount} monsters.");
         }
 
-        // Shared Logic for fighting
         private void BattleLoop(Human hero, Character monster)
         {
             while (hero.IsAlive && monster.IsAlive)
             {
               
                 hero.PrintStatus();
-                hero.printfulloot();
+                hero.PrintFullLoot();
 
                 if (hero.Strength <= 0)
                 {
@@ -91,35 +86,24 @@ namespace Es_3_interfacce.Ambient
                     break;
                 }
 
-                // Hero Turn
                 hero.Attack(monster);
                 if (!monster.IsAlive)
                 {
                     hero.StealLoot(monster);
-                    hero.printfulloot();
+                    hero.PrintFullLoot();
                     break;
                 }
 
                 Console.WriteLine();
 
-                // Monster Turn
                 monster.Attack(hero);
 
-                // Small delay for readability
                 Thread.Sleep(500);
             }
         }
 
-
-
-
-
         public Character GenerateRandomMonster()
         {
-           
-            
-
-            
             int roll = _rnd.Next(1, 101);
 
             switch (CurrentEnvironment)
@@ -143,8 +127,8 @@ namespace Es_3_interfacce.Ambient
 
         public void ChangeEnvironment()
         {
-            List<EnvironmentType> values = new List<EnvironmentType>(Enum.GetValues<EnvironmentType>()); // Get all possible environment types
-            CurrentEnvironment = values[_rnd.Next(values.Count)]; // Randomly select one
+            List<EnvironmentType> values = new List<EnvironmentType>(Enum.GetValues<EnvironmentType>()); 
+            CurrentEnvironment = values[_rnd.Next(values.Count)];
         }
     }
 }

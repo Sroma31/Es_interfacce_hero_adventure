@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Es_3_interfacce.Fight_logic
+namespace RpgGame.Items
 {
     public class LootItem
     {
@@ -15,40 +15,13 @@ namespace Es_3_interfacce.Fight_logic
 
         public LootItem()
         {
-            int NameValue= RollDice(LootNames.GetNames(typeof(LootNames)).Length);
-            if(NameValue == 0) NameValue = 1; // Ensure we don't get 0  
-            if (NameValue == 1)
-            {
-                Name = LootNames.Denaro;
-            }else if (NameValue == 2)
-            {
-                Name = LootNames.Totem;
-            }
-            else if (NameValue == 3)
-            {
-                Name = LootNames.Smeraldo;
-
-            }
-
-            Value = RollDice(20);
+            // Simplified random enum selection
+            var values = Enum.GetValues<LootNames>();
+            Name = values[Dice.Next(values.Length)];
+            Value = Dice.Next(1, 21);
         }
 
-        public LootNames GetName()
-        {
-            return Name;
-        }
-
-        public int GetValue()
-        {
-            return Value;
-        }   
-
-
-
-        protected int RollDice(int faces)
-        {
-            if (faces <= 0) return 0;
-            return Dice.Next(1, faces + 1);
-        }
+        public LootNames GetName() => Name;
+        public int GetValue() => Value;   
     }
 }

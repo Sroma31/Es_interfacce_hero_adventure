@@ -1,5 +1,5 @@
 ﻿using System;
-using Es_3_interfacce.Fight_logic;
+using System.Collections.Generic;
 using RpgGame.Items;
 using RpgGame.Systems;
 
@@ -10,7 +10,7 @@ namespace RpgGame.Characters
     {
         protected static Random Dice = new Random();
 
-        public Weapon EquippedWeapon { get; protected set; }
+        public Weapon? EquippedWeapon { get; protected set; }
         public string Name { get; protected set; }
         public int Strength { get; protected set; }
         public int Health { get; protected set; }
@@ -18,7 +18,7 @@ namespace RpgGame.Characters
 
         public bool IsAlive => Health > 0;
 
-        public List<LootItem> loot= new List<LootItem>();
+        public List<LootItem> Loot { get; protected set; } = new List<LootItem>();
 
 
 
@@ -29,22 +29,20 @@ namespace RpgGame.Characters
             Name = name;
             Strength = initialStrength;
             // Roll HP based on the provided dice type (e.g., 50 for Humans)
-            MaxHealth = Dice.Next(1, healthDice + 1) + 20; // Added base 20 HP so they don't start with 1
+            MaxHealth = Dice.Next(1, healthDice + 1) + 20; 
             Health = MaxHealth;
-            loot.Add(new LootItem());
+            Loot.Add(new LootItem());
         }
 
         
-        public void printfulloot()
+        public void PrintFullLoot()
         {
-            if (loot.Count > 0)
+            if (Loot.Count > 0)
             {
-                foreach (LootItem item in loot)
+                foreach (LootItem item in Loot)
                 {
                     Console.WriteLine($"Loot: {item.GetName()} (Value: {item.GetValue()})");
-
                 }
-               
             }
             else
             {
@@ -56,12 +54,11 @@ namespace RpgGame.Characters
 
         public void StealLoot(ICharacter target)
         {
-            if (target is Character targetCharacter && targetCharacter.loot.Count > 0)
+            if (target is Character targetCharacter && targetCharacter.Loot.Count > 0)
             {
                 //Steal all loot from target
-                loot.AddRange(targetCharacter.loot);
+                Loot.AddRange(targetCharacter.Loot);
                 targetCharacter.EraseLoot();
-
             }
             else
             {
@@ -72,13 +69,26 @@ namespace RpgGame.Characters
 
         public void EraseLoot()
         {
-            loot.Clear();
+            Loot.Clear();
             Console.WriteLine($"{Name}'s loot has been erased.");
         }
 
 
 
         public abstract void Attack(ICharacter target);
+
+        protected void ReduceWeaponDurability()
+        {
+            if (EquippedWeapon != null)
+            {
+                EquippedWeapon.Durability -= 1;
+                if (EquippedWeapon.Durability <= 0)
+                {
+                    Console.WriteLine($"{Name}'s {EquippedWeapon.Name} broke!");
+                    EquippedWeapon = null;
+                }
+            }
+        }
 
         // Centralized damage calculation
         protected int CalculatePhysicalDamage(int baseDiceFaces)
@@ -105,12 +115,9 @@ namespace RpgGame.Characters
             // Handle Weapon Durability degradation
             if (EquippedWeapon != null)
             {
-                EquippedWeapon.Durability -= 1;
-                if (EquippedWeapon.Durability <= 0)
-                {
-                    Console.WriteLine($"{Name}'s {EquippedWeapon.Name} broke!");
-                    EquippedWeapon = null;
-                }
+                // Note: Durability reduction moved to Attack in implementation plan
+                // But keeping it here for now if needed, or removing it as per plan
+                // Move logic to Attack in next step
             }
         }
 
