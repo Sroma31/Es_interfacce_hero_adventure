@@ -1,4 +1,4 @@
-﻿namespace RpgGame.Environments
+﻿namespace Es_3_interfacce.Ambient
 {
     public enum EnvironmentType
     {

@@ -3,10 +3,9 @@ using System.Threading;
 using System.Collections.Generic;
 using RpgGame.Characters;
 using RpgGame.Characters.Monsters;
-using RpgGame.Environments;
 using RpgGame.Systems;
 
-namespace RpgGame
+namespace Es_3_interfacce.Ambient
 {   
 
     public class Arena
@@ -25,9 +24,11 @@ namespace RpgGame
             Console.Clear();
             Console.WriteLine($" DUEL IN: {CurrentEnvironment} ");
             Console.WriteLine($"{hero.Name} VS {monster.Name}");
+            
 
             if (hero.EquippedWeapon == null) hero.EquipRandomWeapon();
             monster.EquipRandomWeapon();
+
 
             BattleLoop(hero, monster);
         }
@@ -80,6 +81,10 @@ namespace RpgGame
         {
             while (hero.IsAlive && monster.IsAlive)
             {
+              
+                hero.PrintStatus();
+                hero.printfulloot();
+
                 if (hero.Strength <= 0)
                 {
                     Console.WriteLine("Hero is exhausted (0 Strength)!");
@@ -88,7 +93,12 @@ namespace RpgGame
 
                 // Hero Turn
                 hero.Attack(monster);
-                if (!monster.IsAlive) break;
+                if (!monster.IsAlive)
+                {
+                    hero.StealLoot(monster);
+                    hero.printfulloot();
+                    break;
+                }
 
                 Console.WriteLine();
 
@@ -100,8 +110,16 @@ namespace RpgGame
             }
         }
 
+
+
+
+
         public Character GenerateRandomMonster()
         {
+           
+            
+
+            
             int roll = _rnd.Next(1, 101);
 
             switch (CurrentEnvironment)

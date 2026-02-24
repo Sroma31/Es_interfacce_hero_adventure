@@ -1,14 +1,19 @@
 ﻿using System;
+using Es_3_interfacce.Ambient;
+using Es_3_interfacce.Fight_logic;
 using RpgGame.Characters;
 using RpgGame.Characters.Monsters;
-using RpgGame.Environments;
+//using RpgGame.Environments;
 
 namespace RpgGame
 {
     class Program
     {
+  
         static void Main(string[] args)
         {
+
+            
             Arena arena = new Arena();
             Console.Write("Enter Hero Name: ");
             string heroName = Console.ReadLine();

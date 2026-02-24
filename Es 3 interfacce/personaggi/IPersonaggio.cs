@@ -11,6 +11,8 @@ namespace RpgGame.Characters
         bool IsAlive { get; }
         Weapon EquippedWeapon { get; }
 
+
+
         void Attack(ICharacter target);
 
         // We pass the attacker to check for specific weaknesses (e.g., Vampire vs Stake)
