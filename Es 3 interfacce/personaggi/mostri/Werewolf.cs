@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.Logic;
 
 namespace RpgGame.Characters.Monsters
 {
@@ -37,7 +38,7 @@ namespace RpgGame.Characters.Monsters
             {
                 moonStatus = "No";
             }
-            Console.WriteLine($"{Name} lunges at the target! (Full moon: {moonStatus})");
+            DisplayManager.PrintBattleLog($"{Name} lunges at the target! (Full moon: {moonStatus})", ConsoleColor.DarkYellow);
 
             target.TakeDamage(totalDamage, this);
 

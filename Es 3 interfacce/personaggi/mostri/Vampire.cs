@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.Logic;
 using RpgGame.ValueObjects;
 
 namespace RpgGame.Characters.Monsters
@@ -10,7 +11,7 @@ namespace RpgGame.Characters.Monsters
         protected override void PerformSpecialAttack(ICharacter target)
         {
             int totalDamage = CalculatePhysicalDamage(10);
-            Console.WriteLine($"{Name} drains blood!");
+            DisplayManager.PrintBattleLog($"{Name} drains blood!", ConsoleColor.DarkMagenta);
             target.TakeDamage(totalDamage, this);
 
             
@@ -27,11 +28,11 @@ namespace RpgGame.Characters.Monsters
 
             if (actualHealed > 0)
             {
-                Console.WriteLine($"{Name} heals {actualHealed} HP.");
+                DisplayManager.PrintBattleLog($"{Name} heals {actualHealed} HP.", ConsoleColor.Green);
             }
             else
             {
-                Console.WriteLine($"{Name} is already at full health.");
+                DisplayManager.PrintBattleLog($"{Name} is already at full health.", ConsoleColor.DarkGray);
             }
         }
 
@@ -44,7 +45,7 @@ namespace RpgGame.Characters.Monsters
 
             if (Health <= 0)
             {
-                Console.WriteLine($"{Name} falls to the ground...");
+                DisplayManager.PrintBattleLog($"{Name} falls to the ground...", ConsoleColor.Red);
 
                 bool isLethalWeapon = false;
 
@@ -59,17 +60,17 @@ namespace RpgGame.Characters.Monsters
 
                 if (isLethalWeapon)
                 {
-                    Console.WriteLine(" THE VAMPIRE TURNS TO DUST (Staked) ");
+                    DisplayManager.PrintBattleLog(" THE VAMPIRE TURNS TO DUST (Staked) ", ConsoleColor.Yellow);
                 }
                 else if (_resurrections < MaxResurrections)
                 {
                     _resurrections++;
-                    Console.WriteLine($"The weapon was not holy... THE VAMPIRE RESURRECTS ({_resurrections}/{MaxResurrections})");
+                    DisplayManager.PrintBattleLog($"Not holy... THE VAMPIRE RESURRECTS ({_resurrections}/{MaxResurrections})", ConsoleColor.DarkYellow);
                     CharacterHealth = CharacterMaxHealth;
                 }
                 else
                 {
-                    Console.WriteLine($"{Name} is too weak to rise again. THE VAMPIRE IS DEFEATED.");
+                    DisplayManager.PrintBattleLog($"{Name} is too weak to rise. THE VAMPIRE IS DEFEATED.", ConsoleColor.Green);
                 }
             }
         }

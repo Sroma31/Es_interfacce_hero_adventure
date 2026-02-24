@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.Logic;
 
 namespace RpgGame.Characters
 {
@@ -14,7 +15,7 @@ namespace RpgGame.Characters
         {
             if (!IsAlive) return;
 
-            Console.WriteLine($"{Name} attacks");
+            DisplayManager.PrintBattleLog($"{Name} attacks!", ConsoleColor.White);
 
             int totalDamage = CalculatePhysicalDamage(6); // 1d6 Base
             target.TakeDamage(totalDamage, this);

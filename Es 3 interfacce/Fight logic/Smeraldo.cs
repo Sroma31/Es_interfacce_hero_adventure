@@ -1,5 +1,6 @@
 using System;
 using RpgGame.Characters;
+using RpgGame.Logic;
 
 namespace RpgGame.Items
 {
@@ -10,7 +11,7 @@ namespace RpgGame.Items
         public override void ApplyEffect(Character target)
         {
             target.ApplyStrengthBoost(2);
-            Console.WriteLine($"{target.Name} used Smeraldo to boost strength! (+2 STR)");
+            DisplayManager.PrintBattleLog($"{target.Name} used Smeraldo! (+2 STR)", ConsoleColor.Green);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.Logic;
 using RpgGame.ValueObjects;
 
 namespace RpgGame.Characters.Monsters
@@ -14,7 +15,7 @@ namespace RpgGame.Characters.Monsters
             CharacterStrength = CharacterStrength + boost;
             CharacterMaxHealth = CharacterMaxHealth + boost;
             CharacterHealth = CharacterMaxHealth;
-            Console.WriteLine($"{Name} is empowered! (+{boost} STR/HP)");
+            DisplayManager.PrintBattleLog($"{Name} is empowered! (+{boost} STR/HP)", ConsoleColor.Magenta);
         }
 
         public override void Attack(ICharacter target)

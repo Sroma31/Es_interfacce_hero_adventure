@@ -4,6 +4,7 @@ using RpgGame.Items;
 using RpgGame.Systems;
 using RpgGame.ValueObjects;
 using RpgGame.Characters.Abstraction;
+using RpgGame.Logic;
 
 
 namespace RpgGame.Characters
@@ -72,7 +73,7 @@ namespace RpgGame.Characters
             }
             else
             {
-                Console.WriteLine($"{Name} tries to steal from {target.Name}, but there's nothing to steal!");
+                DisplayManager.PrintBattleLog($"{Name} tries to steal from {target.Name}, but nothing to steal!", ConsoleColor.DarkYellow);
             }
         }
 
@@ -104,7 +105,7 @@ namespace RpgGame.Characters
         public void EraseLoot()
         {
             Backpack.Clear();
-            Console.WriteLine($"{Name}'s loot has been erased.");
+            DisplayManager.PrintBattleLog($"{Name}'s loot has been erased.", ConsoleColor.DarkGray);
         }
 
 
@@ -118,7 +119,7 @@ namespace RpgGame.Characters
                 EquippedWeapon.Durability -= 1;
                 if (EquippedWeapon.Durability <= 0)
                 {
-                    Console.WriteLine($"{Name}'s {EquippedWeapon.Name} broke!");
+                    DisplayManager.PrintBattleLog($"{Name}'s {EquippedWeapon.Name} broke!", ConsoleColor.Red);
                     EquippedWeapon = null;
                 }
             }
@@ -156,13 +157,13 @@ namespace RpgGame.Characters
         public virtual void TakeDamage(int amount, ICharacter attacker)
         {
             CharacterHealth = CharacterHealth - amount;
-            Console.WriteLine($"{Name} takes {amount} damage (HP: {Health}/{MaxHealth})");
+            DisplayManager.PrintBattleLog($"{Name} takes {amount} damage (HP: {Health}/{MaxHealth})", ConsoleColor.DarkRed);
         }
 
         public void EquipRandomWeapon()
         {
             EquippedWeapon = Arsenal.GetRandomWeapon();
-            Console.WriteLine($"{Name} equipped {EquippedWeapon.Name} (Dmg: {EquippedWeapon.Damage})");
+            DisplayManager.PrintBattleLog($"{Name} equipped {EquippedWeapon.Name} (Dmg: {EquippedWeapon.Damage})", ConsoleColor.Cyan);
         }
         
         public void PrintStatus()
@@ -176,7 +177,7 @@ namespace RpgGame.Characters
             {
                 weaponName = "Fists";
             }
-            Console.WriteLine($"[{Name}] HP: {Health}/{MaxHealth} | STR: {Strength} | WPN: {weaponName}");
+            DisplayManager.PrintBattleLog($"[{Name}] HP: {Health}/{MaxHealth} | STR: {Strength} | WPN: {weaponName}");
         }
 
         protected int RollDice(int faces)

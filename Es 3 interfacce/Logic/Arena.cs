@@ -19,26 +19,23 @@ namespace RpgGame.Logic
 
         public void StartDuel(Human hero, Character monster)
         {
-            Console.Clear();
-            Console.WriteLine($" DUEL IN: {CurrentEnvironment} ");
-            Console.WriteLine($"{hero.Name} VS {monster.Name}");
-            
+            DisplayManager.DrawHeader("DUEL BEGINS", CurrentEnvironment);
+            DisplayManager.CenterPrint($"{hero.Name} VS {monster.Name}", ConsoleColor.Red);
+            Console.WriteLine();
 
             if (hero.EquippedWeapon == null) hero.EquipRandomWeapon();
             monster.EquipRandomWeapon();
 
-
+            Thread.Sleep(1000);
             _battleEngine.ProcessDuel(hero, monster);
         }
 
         public void StartHordeMode(Human hero, int numberOfMonsters)
         {
-            Console.Clear();
-            Console.WriteLine($" HORDE MODE ACTIVATED");
-            Console.WriteLine($"Hero: {hero.Name}");
-            Console.WriteLine($"Objective: Survive {numberOfMonsters} monsters.");
+            DisplayManager.DrawHeader("HORDE MODE", CurrentEnvironment);
+            DisplayManager.CenterPrint($"Objective: Survive {numberOfMonsters} monsters.", ConsoleColor.Yellow);
             Console.WriteLine("");
-            Thread.Sleep(2000);
+            Thread.Sleep(1500);
 
             if (hero.EquippedWeapon == null) hero.EquipRandomWeapon();
 
@@ -48,31 +45,35 @@ namespace RpgGame.Logic
             {
                 if (!hero.IsAlive) break;
 
-                Console.WriteLine($"\n WAVE {i}/{numberOfMonsters} ");
+                DisplayManager.PrintMessage($"\n --- WAVE {i}/{numberOfMonsters} ---", ConsoleColor.Cyan);
                 
                 Character monster = _monsterFactory.CreateRandomMonster(CurrentEnvironment);
                 _monsterFactory.ApplyScaling(monster, i);
 
                 monster.EquipRandomWeapon();
 
-                Console.WriteLine($" {monster.Name} appears");
+                DisplayManager.PrintMessage($"{monster.Name} appears!", ConsoleColor.DarkYellow);
+                Thread.Sleep(1000);
 
                 _battleEngine.ProcessDuel(hero, monster);
 
                 if (hero.IsAlive && hero.Strength > 0)
                 {
                     defeatedCount++;
-                    Console.WriteLine($"Wave {i} cleared! Hero rests for a bit (+5 HP).");
+                    DisplayManager.PrintMessage($"Wave {i} cleared! Hero rests (+5 HP).", ConsoleColor.Green);
                     hero.AddHealth(5);
                     hero.EquipRandomWeapon();
                 }
             }
 
-            Console.WriteLine("\n HORDE MODE RESULTS ");
+            DisplayManager.DrawHeader("HORDE MODE RESULTS", CurrentEnvironment);
             if (hero.IsAlive)
-                Console.WriteLine("VICTORY. The hero survived the horde.");
+                DisplayManager.CenterPrint("VICTORY! The hero survived the horde.", ConsoleColor.Green);
             else
-                Console.WriteLine($"DEFEAT... The hero fell after defeating {defeatedCount} monsters.");
+                DisplayManager.CenterPrint($"DEFEAT... The hero fell after defeating {defeatedCount} monsters.", ConsoleColor.Red);
+            
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
         }
 
         public Character GenerateRandomMonster()

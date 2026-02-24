@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RpgGame.Items;
+using RpgGame.Logic;
 
 namespace RpgGame.Systems
 {
@@ -49,12 +50,12 @@ namespace RpgGame.Systems
             {
                 foreach (ILootItem item in _items)
                 {
-                    Console.WriteLine($"[{ownerName}'s Inventory] Loot: {item.Name} (Value: {item.Value})");
+                    DisplayManager.PrintBattleLog($"[{ownerName}'s Inventory] Loot: {item.Name} (Value: {item.Value})", ConsoleColor.White);
                 }
             }
             else
             {
-                Console.WriteLine($"[{ownerName}'s Inventory] Empty.");
+                DisplayManager.PrintBattleLog($"[{ownerName}'s Inventory] Empty.", ConsoleColor.DarkGray);
             }
         }
     }

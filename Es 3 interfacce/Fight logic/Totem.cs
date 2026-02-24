@@ -1,5 +1,6 @@
 using System;
 using RpgGame.Characters;
+using RpgGame.Logic;
 
 namespace RpgGame.Items
 {
@@ -11,7 +12,7 @@ namespace RpgGame.Items
         {
             target.ApplyMaxHealthBoost(10);
             target.AddHealth(10);
-            Console.WriteLine($"{target.Name} used Totem to increase vitality! (+10 MaxHP)");
+            DisplayManager.PrintBattleLog($"{target.Name} used Totem! (+10 MaxHP)", ConsoleColor.Green);
         }
     }
 }

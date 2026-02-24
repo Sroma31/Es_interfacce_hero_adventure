@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.Logic;
 
 namespace RpgGame.Characters.Monsters
 {
@@ -9,7 +10,7 @@ namespace RpgGame.Characters.Monsters
         protected override void PerformSpecialAttack(ICharacter target)
         {
             int totalDamage = CalculatePhysicalDamage(4); // Weak attack
-            Console.WriteLine($"{Name} strikes sneakily!");
+            DisplayManager.PrintBattleLog($"{Name} strikes sneakily!", ConsoleColor.DarkYellow);
             target.TakeDamage(totalDamage, this);
         }
     }

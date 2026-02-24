@@ -1,5 +1,6 @@
 using System;
 using RpgGame.Characters;
+using RpgGame.Logic;
 
 namespace RpgGame.Items
 {
@@ -10,7 +11,7 @@ namespace RpgGame.Items
         public override void ApplyEffect(Character target)
         {
             target.AddHealth(5);
-            Console.WriteLine($"{target.Name} used Denaro to buy a health potion! (+5 HP)");
+            DisplayManager.PrintBattleLog($"{target.Name} used Denaro! (+5 HP)", ConsoleColor.Green);
         }
     }
 }
