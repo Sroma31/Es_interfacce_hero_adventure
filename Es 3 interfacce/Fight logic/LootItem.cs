@@ -1,27 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RpgGame.Characters;
 
 namespace RpgGame.Items
 {
-    public class LootItem
+    public abstract class LootItem : ILootItem
     {
         protected static Random Dice = new Random();
-        public LootNames Name { get; set; }
-        public int Value { get; set; }
+        public abstract string Name { get; }
+        public int Value { get; protected set; }
 
         public LootItem()
         {
-            // Simplified random enum selection
-            var values = Enum.GetValues<LootNames>();
-            Name = values[Dice.Next(values.Length)];
             Value = Dice.Next(1, 21);
         }
 
-        public LootNames GetName() => Name;
-        public int GetValue() => Value;   
+        public string GetName() => Name;
+        public int GetValue() => Value;
+
+        public abstract void ApplyEffect(Character target);
+
+        public static ILootItem GetRandomLoot()
+        {
+            int roll = Dice.Next(0, 3);
+            switch (roll)
+            {
+                case 0:
+                    return new Denaro();
+                case 1:
+                    return new Smeraldo();
+                default:
+                    return new Totem();
+            }
+        }
     }
 }

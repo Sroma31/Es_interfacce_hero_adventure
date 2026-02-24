@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.ValueObjects;
 
 namespace RpgGame.Characters.Monsters
 {
@@ -15,16 +16,14 @@ namespace RpgGame.Characters.Monsters
             
             int healAttempt = 5;
 
-            // Protezione contro valori anomali di MaxHealth
-            int effectiveMax = Math.Max(0, MaxHealth);//math.max per evitare valori negativi di MaxHealth
+            int effectiveMax = Math.Max(0, MaxHealth);
 
             int previousHealth = Health;
-            int newHealth = Math.Min(previousHealth + healAttempt, effectiveMax);// Calcolo reale della cura effettiva
-            // math.min per evitare di superare MaxHealth
+            int newHealth = Math.Min(previousHealth + healAttempt, effectiveMax);
 
             int actualHealed = newHealth - previousHealth;
 
-            Health = newHealth;
+            CharacterHealth = new HealthPoints(newHealth);
 
             if (actualHealed > 0)
             {
@@ -35,6 +34,9 @@ namespace RpgGame.Characters.Monsters
                 Console.WriteLine($"{Name} is already at full health.");
             }
         }
+
+        private int _resurrections = 0;
+        private const int MaxResurrections = 2;
 
         public override void TakeDamage(int amount, ICharacter attacker)
         {
@@ -59,10 +61,15 @@ namespace RpgGame.Characters.Monsters
                 {
                     Console.WriteLine(" THE VAMPIRE TURNS TO DUST (Staked) ");
                 }
+                else if (_resurrections < MaxResurrections)
+                {
+                    _resurrections++;
+                    Console.WriteLine($"The weapon was not holy... THE VAMPIRE RESURRECTS ({_resurrections}/{MaxResurrections})");
+                    CharacterHealth = CharacterMaxHealth;
+                }
                 else
                 {
-                    Console.WriteLine("The weapon was not holy... THE VAMPIRE RESURRECTS");
-                    Health = MaxHealth;
+                    Console.WriteLine($"{Name} is too weak to rise again. THE VAMPIRE IS DEFEATED.");
                 }
             }
         }

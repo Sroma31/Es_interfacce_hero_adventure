@@ -1,4 +1,5 @@
 ﻿using System;
+using RpgGame.ValueObjects;
 
 namespace RpgGame.Characters.Monsters
 {
@@ -6,6 +7,15 @@ namespace RpgGame.Characters.Monsters
     {
         public Monster(string name, int strength, int healthDice)
             : base(name, strength, healthDice) { }
+
+        public void Scale(int level)
+        {
+            int boost = level * 2;
+            CharacterStrength = CharacterStrength + boost;
+            CharacterMaxHealth = CharacterMaxHealth + boost;
+            CharacterHealth = CharacterMaxHealth;
+            Console.WriteLine($"{Name} is empowered! (+{boost} STR/HP)");
+        }
 
         public override void Attack(ICharacter target)
         {
@@ -15,8 +25,7 @@ namespace RpgGame.Characters.Monsters
             ReduceWeaponDurability();
 
             // Monsters lose energy/strength after attacking
-            if (Strength > 0) Strength -= 2;
-            if (Strength < 0) Strength = 0;
+            CharacterStrength = CharacterStrength - 2;
         }
 
         protected abstract void PerformSpecialAttack(ICharacter target);

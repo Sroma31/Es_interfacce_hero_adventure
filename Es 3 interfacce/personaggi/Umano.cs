@@ -22,8 +22,7 @@ namespace RpgGame.Characters
             ReduceWeaponDurability();
 
             // Humans get tired
-            Strength -= 1;
-            if (Strength < 0) Strength = 0;
+            CharacterStrength = CharacterStrength - 1;
         }
     }
 }

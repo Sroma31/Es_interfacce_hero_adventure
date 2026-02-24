@@ -16,9 +16,8 @@ namespace RpgGame.Characters.Monsters
 
         protected override void PerformSpecialAttack(ICharacter target)
         {
-
             int diceFaces;
-            if (IsFullMoon == true)
+            if (IsFullMoon)
             {
                 diceFaces = 12;
             }
@@ -27,20 +26,25 @@ namespace RpgGame.Characters.Monsters
                 diceFaces = 6;
             }
 
-
             int totalDamage = CalculatePhysicalDamage(diceFaces);
 
-          
-            Console.WriteLine($"{this.Name} si scaglia contro il bersaglio! (Luna piena: {(IsFullMoon ? "Sì" : "No")})");
+            string moonStatus;
+            if (IsFullMoon)
+            {
+                moonStatus = "Yes";
+            }
+            else
+            {
+                moonStatus = "No";
+            }
+            Console.WriteLine($"{Name} lunges at the target! (Full moon: {moonStatus})");
 
-            // Applica il danno al bersaglio; passa 'this' come attaccante per eventuali check
             target.TakeDamage(totalDamage, this);
 
-            // Durante la luna piena i lupi mannari rigenerano forza: incrementiamo Strength di 1
-            if (IsFullMoon == true)
+            // During the full moon, werewolves regenerate strength
+            if (IsFullMoon)
             {
-                int nuovaForza = this.Strength + 1;
-                this.Strength = nuovaForza;
+                CharacterStrength = CharacterStrength + 1;
             }
         }
     }

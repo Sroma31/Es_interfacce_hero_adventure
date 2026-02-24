@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using RpgGame.Items;
 using RpgGame.Systems;
+using RpgGame.ValueObjects;
+using RpgGame.Characters.Abstraction;
 
 
 namespace RpgGame.Characters
@@ -11,54 +13,62 @@ namespace RpgGame.Characters
         protected static Random Dice = new Random();
 
         public Weapon? EquippedWeapon { get; protected set; }
-        public string Name { get; protected set; }
-        public int Strength { get; protected set; }
-        public int Health { get; protected set; }
-        public int MaxHealth { get; protected set; }
+        public CharacterName Name { get; protected set; }
+        
+        // Value objects handle clamping internally
+        public Strength CharacterStrength { get; protected set; }
+        public HealthPoints CharacterHealth { get; protected set; }
+        public HealthPoints CharacterMaxHealth { get; protected set; }
 
-        public bool IsAlive => Health > 0;
+        // ICharacter properties delegate to value objects (implicit int conversion)
+        int ICharacter.Strength => CharacterStrength;
+        int ICharacter.Health => CharacterHealth;
+        int ICharacter.MaxHealth => CharacterMaxHealth;
 
-        public List<LootItem> Loot { get; protected set; } = new List<LootItem>();
+        // Convenience properties for internal use
+        public int Strength => CharacterStrength;
+        public int Health => CharacterHealth;
+        public int MaxHealth => CharacterMaxHealth;
 
+        public bool IsAlive => CharacterHealth > 0;
 
-
+        public Inventory Backpack { get; protected set; } = new Inventory();
 
 
         public Character(string name, int initialStrength, int healthDice)
         {
-            Name = name;
-            Strength = initialStrength;
+            Name = new CharacterName(name);
+            CharacterStrength = new Strength(initialStrength);
             // Roll HP based on the provided dice type (e.g., 50 for Humans)
-            MaxHealth = Dice.Next(1, healthDice + 1) + 20; 
-            Health = MaxHealth;
-            Loot.Add(new LootItem());
+            int maxHp = Dice.Next(1, healthDice + 1) + 20; 
+            CharacterMaxHealth = new HealthPoints(maxHp);
+            CharacterHealth = new HealthPoints(maxHp);
+            Backpack.Add(LootItem.GetRandomLoot());
         }
 
         
         public void PrintFullLoot()
         {
-            if (Loot.Count > 0)
-            {
-                foreach (LootItem item in Loot)
-                {
-                    Console.WriteLine($"Loot: {item.GetName()} (Value: {item.GetValue()})");
-                }
-            }
-            else
-            {
-                Console.WriteLine("No loot available.");
-            }
+            Backpack.PrintContents(Name);
         }
 
 
 
         public void StealLoot(ICharacter target)
         {
-            if (target is Character targetCharacter && targetCharacter.Loot.Count > 0)
+            if (target is Character targetCharacter && targetCharacter.Backpack.Items.Count > 0)
             {
-                //Steal all loot from target
-                Loot.AddRange(targetCharacter.Loot);
-                targetCharacter.EraseLoot();
+                // Create a separate reference to stolen items for immediate effect processing
+                List<ILootItem> stolenItems = new List<ILootItem>(targetCharacter.Backpack.Items);
+                
+                // Steal (transfer) all loot from target
+                Backpack.TransferFrom(targetCharacter.Backpack);
+                
+                // Hero gains benefits from loot immediately upon stealing
+                if (this is Human)
+                {
+                    ApplyLootEffects(stolenItems);
+                }
             }
             else
             {
@@ -66,10 +76,34 @@ namespace RpgGame.Characters
             }
         }
 
+        private void ApplyLootEffects(List<ILootItem> items)
+        {
+            foreach (var item in items)
+            {
+                item.ApplyEffect(this);
+            }
+        }
+
+        public void AddHealth(int amount)
+        {
+            int newHp = Math.Min(CharacterHealth + amount, CharacterMaxHealth);
+            CharacterHealth = new HealthPoints(newHp);
+        }
+
+        public void ApplyStrengthBoost(int amount)
+        {
+            CharacterStrength = CharacterStrength + amount;
+        }
+
+        public void ApplyMaxHealthBoost(int amount)
+        {
+            CharacterMaxHealth = CharacterMaxHealth + amount;
+        }
+
 
         public void EraseLoot()
         {
-            Loot.Clear();
+            Backpack.Clear();
             Console.WriteLine($"{Name}'s loot has been erased.");
         }
 
@@ -96,29 +130,33 @@ namespace RpgGame.Characters
             int baseRoll = RollDice(baseDiceFaces);
 
             // Strength multiplier (min 1 if strength > 0)
-            int multiplier = (Strength > 0) ? Math.Max(1, Strength / 2) : 0;
+            int multiplier;
+            if (Strength > 0)
+            {
+                multiplier = Math.Max(1, Strength / 2);
+            }
+            else
+            {
+                multiplier = 0;
+            }
 
-            int weaponDamage = (EquippedWeapon != null) ? EquippedWeapon.Damage : 0;
+            int weaponDamage;
+            if (EquippedWeapon != null)
+            {
+                weaponDamage = EquippedWeapon.Damage;
+            }
+            else
+            {
+                weaponDamage = 0;
+            }
 
             return (baseRoll * multiplier) + weaponDamage;
         }
 
         public virtual void TakeDamage(int amount, ICharacter attacker)
         {
-            Health -= amount;
-            if (Health < 0)
-            {
-                Health = 0;
-            }
+            CharacterHealth = CharacterHealth - amount;
             Console.WriteLine($"{Name} takes {amount} damage (HP: {Health}/{MaxHealth})");
-
-            // Handle Weapon Durability degradation
-            if (EquippedWeapon != null)
-            {
-                // Note: Durability reduction moved to Attack in implementation plan
-                // But keeping it here for now if needed, or removing it as per plan
-                // Move logic to Attack in next step
-            }
         }
 
         public void EquipRandomWeapon()
@@ -129,14 +167,17 @@ namespace RpgGame.Characters
         
         public void PrintStatus()
         {
-            string weaponName = (EquippedWeapon != null) ? EquippedWeapon.Name : "Fists";
-            // Correzione: chiamare il metodo printfulloot() sull'istanza corrente
+            string weaponName;
+            if (EquippedWeapon != null)
+            {
+                weaponName = EquippedWeapon.Name;
+            }
+            else
+            {
+                weaponName = "Fists";
+            }
             Console.WriteLine($"[{Name}] HP: {Health}/{MaxHealth} | STR: {Strength} | WPN: {weaponName}");
-            
-            
         }
-
-
 
         protected int RollDice(int faces)
         {
