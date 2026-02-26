@@ -6,7 +6,7 @@ namespace RpgGame.Characters
     public class Human : Character
     {
         public Human(string name) 
-            : base(name, 10, 50)
+            : base(name, 20, 100)
         { 
         
         }

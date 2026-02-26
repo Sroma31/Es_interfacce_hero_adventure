@@ -5,10 +5,7 @@ using RpgGame.Logic;
 
 namespace RpgGame.Systems
 {
-    /// <summary>
-    /// Manages a collection of loot items. 
-    /// Follows SRP by separating item storage/management from the character's mental/physical state.
-    /// </summary>
+    
     public class Inventory
     {
         private List<ILootItem> _items = new List<ILootItem>();

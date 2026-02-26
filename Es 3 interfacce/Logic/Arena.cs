@@ -45,7 +45,7 @@ namespace RpgGame.Logic
             {
                 if (!hero.IsAlive) break;
 
-                DisplayManager.PrintMessage($"\n --- WAVE {i}/{numberOfMonsters} ---", ConsoleColor.Cyan);
+                DisplayManager.PrintMessage($"\n  WAVE {i}/{numberOfMonsters} ", ConsoleColor.Cyan);
                 
                 Character monster = _monsterFactory.CreateRandomMonster(CurrentEnvironment);
                 _monsterFactory.ApplyScaling(monster, i);

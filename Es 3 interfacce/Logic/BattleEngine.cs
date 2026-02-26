@@ -4,7 +4,7 @@ using RpgGame.Characters;
 
 namespace RpgGame.Logic
 {
-    
+
     public class BattleEngine
     {
         public void ProcessDuel(Human hero, Character monster)

@@ -5,7 +5,7 @@ using RpgGame.Logic;
 
 namespace RpgGame.Logic
 {
-    public static class DisplayManager
+    public  class DisplayManager
     {
         private const int TotalWidth = 80;
         private const int ColumnWidth = 35;
